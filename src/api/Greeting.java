@@ -1,4 +1,4 @@
-package service;
+package api;
 
 public class Greeting {
 
