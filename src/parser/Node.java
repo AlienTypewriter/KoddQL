@@ -161,7 +161,6 @@ public abstract class Node {
 								((Projection)left).table.toSQL(sb, null);
 								sb.append(')');
 							}
-							sb.append("; ");
 							break;
 // SELECT EQUIJOIN						
 						case EQUIJOIN:
@@ -199,7 +198,6 @@ public abstract class Node {
 								sb.append(" AND ");
 							}
 							sb.delete(sb.length()-5, sb.length());
-							sb.append(';');
 							break;
 // SELECT JOIN		
 						case JOIN:
@@ -294,6 +292,7 @@ public abstract class Node {
 				left.toSQL(sb, null);
 				break;
 			}
+			sb.append(";");
 		}
 		
 		public NodeType getType() {
