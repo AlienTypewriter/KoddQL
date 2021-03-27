@@ -157,7 +157,7 @@ public class Syntaxer {
 				arr.add(list.get(shift.value));
 				++shift.value;
 				
-				if(list.get(shift.value - 1).type != LexemeType.NAME & list.get(shift.value - 1).type != LexemeType.VARIABLE) 
+				//if(list.get(shift.value - 1).type != LexemeType.NAME & list.get(shift.value - 1).type != LexemeType.VARIABLE) 
 					if(
 							(list.get(++shift.value).type == LexemeType.NAME) | 
 							(list.get(shift.value).type == LexemeType.VARIABLE) |
@@ -178,11 +178,11 @@ public class Syntaxer {
 						--shift.value;
 						return previous;
 					}
-				else {
-					previous = new Node.Names();
-					((Node.Names)previous).names = arr;
+				/*else {
+					//previous = new Node.Names();
+					//((Node.Names)previous).names = arr;
 					return previous;
-				}
+				}*/
 			} else {													// Else selection / theta-join
 
 				while(list.get(shift.value + 1) != Lexeme.SQUARE_BR_R) {

@@ -43,7 +43,7 @@ public class KoddQL {
 		instance.toSQL(
 						//"database[number ~ 10 & 50]customers -> RESULT;" 
 				//"(data, wiki, table)[field, field2] & table -> RESULT"
-				"[field1, field2] -> RESULT"
+				"table [field1, field2] -> RESULT"
 				);
 		for(String str : instance.queries)
 			System.out.println(str);
