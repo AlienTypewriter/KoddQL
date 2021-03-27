@@ -1,0 +1,2 @@
+SELECT * FROM table1 UNION SELECT * FROM table2;
+SELECT field1, field2 FROM table;

@@ -1,0 +1,2 @@
+table1 AND table2 -> RESULT
+table [field1, field2] -> RESULT
