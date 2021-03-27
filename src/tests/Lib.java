@@ -36,7 +36,7 @@ public class Lib {
             while ((c = reader.read()) != -1) {
                 if ((char) c == symbol) {
                     if (symbol == ';')
-                        tempStr.append("");
+                        tempStr.append(";");
                     tempStr = new StringBuilder(tempStr.toString().trim());
                     strings.add(tempStr.toString());
                     tempStr = new StringBuilder();

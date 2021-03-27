@@ -1,6 +1,6 @@
 package tests;
 
-import org.junit.Assert;
+import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import parser.KoddQL;
@@ -37,9 +37,9 @@ public class MainTest {
         }
     }
 
-    public static void main(String[] args) {
-        ArrayList<String> stringsInputFile1 =  Lib.getSQLCommands(fileNameSQL);
-        System.out.println(stringsInputFile1.get(2));
-        System.out.print(Lib.getLines(fileNameSQL));
-    }
+//    public static void main(String[] args) {
+//        ArrayList<String> stringsInputFile1 =  Lib.getSQLCommands(fileNameSQL);
+//        System.out.println(stringsInputFile1.get(2));
+//        System.out.print(Lib.getLines(fileNameSQL));
+//    }
 }
