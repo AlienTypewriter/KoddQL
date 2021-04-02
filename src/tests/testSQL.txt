@@ -1,0 +1,3 @@
+SELECT * FROM table1 UNION SELECT * FROM table2;
+SELECT field1, field2 FROM table;
+SELECT * FROM tableLeft AS L, tableRight AS R WHERE L.field1=R.field1 AND L.field2=R.field2;
