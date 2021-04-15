@@ -39,11 +39,12 @@ public class KoddQL {
 	//TODO: fix AND
 	public static void main(String[] args) throws Exception {
 		KoddQL instance = new KoddQL();
-		instance.dbms = DBMS.PostgreSQL;
+		instance.dbms = DBMS.Microsoft_SQL_Server;
 		instance.toSQL(
 						//"database[number ~ 10 & 50]customers -> RESULT;" 
 				//"(data, wiki, table)[field, field2] & table -> RESULT"
-				"table [field1, field2] -> RESULT; table1 AND table2 -> RESULT"
+				//"table1 UNION table2 UNION table3 -> RESULT;"
+				"<name | INTEGER | NOT NULL, PRIMARY KEY, DEFAULT(15)> UNION <surname | BYTE> -> customers"
 				);
 		for(String str : instance.queries)
 			System.out.println(str);
@@ -52,7 +53,7 @@ public class KoddQL {
 		
 		StringBuilder sb = new StringBuilder();
 		for(Map.Entry<String,Node> entry : instance.variables.entrySet()) {
-			entry.getValue().toSQL(sb, DBMS.Oracle);
+			entry.getValue().toSQL(sb, instance.dbms);
 			sb.append(" -> ");
 			sb.append(entry.getKey());
 			System.out.println(sb.toString());

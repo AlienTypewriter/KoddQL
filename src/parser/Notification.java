@@ -28,6 +28,8 @@ public class Notification {
 		presets.put(Type.ERROR_MULTIPLE_ASSIGNS, "ERROR: Multiple assigns in one query ");
 		presets.put(Type.ERROR_NOT_NAME_IN_GROUP, "ERROR: Unexpected identifier in group ");
 		presets.put(Type.ERROR_NOT_NAME_IN_PROJECTION_OR_EQUIJOIN, "ERROR: Unexpected identifier in projection or equijoin ");
+		presets.put(Type.ERROR_UNEXPECTED_SYMBOL, "ERROR: Unexpected symbol ");
+		presets.put(Type.ERROR_MISSING_SYMBOL, "ERROR: Symbol expected ");
 	}
 	
 	
@@ -70,7 +72,7 @@ public class Notification {
 		NOTE(0),
 		CAUTION(1),
 		WARNING(2), WARNING_UNUSED_VARIABLE(2+4* 1),
-		ERROR(3), ERROR_UNDECLARED_VARIABLE(3+4* 1), ERROR_MULTIPLE_ASSIGNS(3+4* 2), ERROR_NOT_NAME_IN_GROUP(3+4* 3), ERROR_NOT_NAME_IN_PROJECTION_OR_EQUIJOIN(3+4* 4);
+		ERROR(3), ERROR_UNDECLARED_VARIABLE(3+4* 1), ERROR_MULTIPLE_ASSIGNS(3+4* 2), ERROR_NOT_NAME_IN_GROUP(3+4* 3), ERROR_NOT_NAME_IN_PROJECTION_OR_EQUIJOIN(3+4* 4), ERROR_UNEXPECTED_SYMBOL(3+4* 5), ERROR_MISSING_SYMBOL(3+4* 6);
 		
 		private int value;
 

@@ -23,15 +23,20 @@ public class Lexer {
 			case "]":
 				result.add(Lexeme.SQUARE_BR_R); break;
 			
+			case "INTERSECTION":
 			case "AND":
 			case "&":
 				result.add(Lexeme.AND); break;
+			case "UNION":
 			case "OR":
 			case "|":
 				result.add(Lexeme.OR); break;
 			case "MINUS":
 			case "\\":
 				result.add(Lexeme.DIVISION); break;
+			case "DIFFERENCE":
+			case "^":
+				result.add(Lexeme.XOR); break;
 				
 			case "<":
 				if(list.get(i+1).equals("=")) { //TODO: consider switch
@@ -83,6 +88,31 @@ public class Lexer {
 			case "/n":
 			case ";":
 				result.add(Lexeme.SEMICOLON); break;
+				
+
+			case "RESULT":
+				result.add(Lexeme.RESULT); break;
+			case "DELETE":
+				result.add(Lexeme.DELETE); break;
+			case "USE":
+				result.add(Lexeme.USE); break;
+			case "CREATE":
+				result.add(Lexeme.CREATE); break;
+				
+				
+			case "NULL":
+				result.add(Lexeme.NULL); break;
+			case "UNIQUE":
+				result.add(Lexeme.UNIQUE); break;
+			case "DEFAULT":
+				result.add(Lexeme.DEFAULT); break;
+			case "PRIMARY":
+				result.add(Lexeme.PRIMARY); break;
+			case "FOREIGN":
+				result.add(Lexeme.FOREIGN); break;
+			case "KEY":
+				result.add(Lexeme.KEY); break;
+				
 			default:
 				switch(str.charAt(0)) {
 				case '"':
@@ -128,6 +158,7 @@ public class Lexer {
 		
 		public final static Lexeme AND = new Lexeme(LexemeType.AND);
 		public final static Lexeme OR = new Lexeme(LexemeType.OR);
+		public final static Lexeme XOR = new Lexeme(LexemeType.XOR);
 		public final static Lexeme DIVISION = new Lexeme(LexemeType.DIVISION);
 		
 		public final static Lexeme OP_LESS = new Lexeme(LexemeType.OP_LESS);
@@ -145,6 +176,18 @@ public class Lexer {
 		public final static Lexeme COMMA = new Lexeme(LexemeType.COMMA);
 		public final static Lexeme ASSIGN = new Lexeme(LexemeType.ASSIGN);
 		public final static Lexeme SEMICOLON = new Lexeme(LexemeType.SEMICOLON);
+		
+		public final static Lexeme RESULT = new Lexeme(LexemeType.RESULT);
+		public final static Lexeme DELETE = new Lexeme(LexemeType.DELETE);
+		public final static Lexeme USE = new Lexeme(LexemeType.USE);
+		public final static Lexeme CREATE = new Lexeme(LexemeType.CREATE);
+		
+		public final static Lexeme NULL = new Lexeme(LexemeType.NULL);
+		public final static Lexeme DEFAULT = new Lexeme(LexemeType.DEFAULT);
+		public final static Lexeme UNIQUE = new Lexeme(LexemeType.UNIQUE);
+		public final static Lexeme PRIMARY = new Lexeme(LexemeType.PRIMARY);
+		public final static Lexeme FOREIGN = new Lexeme(LexemeType.FOREIGN);
+		public final static Lexeme KEY = new Lexeme(LexemeType.KEY);
 		
 		//public final static Lexeme RESULT = new Lexeme(LexemeType.RESULT);
 		//public final static Lexeme DELETE = new Lexeme(LexemeType.DELETE);
@@ -187,6 +230,8 @@ public class Lexer {
 				return "=";
 			case OP_NOT_EQUAL:
 				return "<>";
+			case OP_NOT:
+				return "!";
 			case OP_LIKE:
 				return "~";
 			case OP_IN:
@@ -235,10 +280,12 @@ public class Lexer {
 	}
 	
 	public enum LexemeType {
-		AND, OR, DIVISION, 
+		AND, OR, XOR, DIVISION, 
 		OP_LESS, OP_LESS_EQUAL, OP_MORE, OP_MORE_EQUAL, OP_EQUAL, OP_NOT_EQUAL, OP_NOT, OP_LIKE, OP_IN, OP_BETWEEN, OP_DIVISION,
 		ROUND_BR_L, ROUND_BR_R, SQUARE_BR_L, SQUARE_BR_R, COMMA, ASSIGN, SEMICOLON,
-		NAME, VARIABLE, TEXT, INTEGER, DECIMAL;
+		NAME, VARIABLE, TEXT, INTEGER, DECIMAL,
+		RESULT, DELETE, USE, CREATE,
+		NULL, DEFAULT, UNIQUE, PRIMARY, FOREIGN, KEY;
 		
 		public int getPriority() {
 			switch(this) {

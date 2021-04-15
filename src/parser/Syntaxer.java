@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import parser.Lexer.Lexeme;
 import parser.Lexer.LexemeType;
+import parser.Node.DataType;
 import parser.Node.NodeType;
 import parser.Utilities.IntRef;
 
@@ -82,6 +83,15 @@ public class Syntaxer {
 	public static Node syntax(Node previous, ArrayList<Lexer.Lexeme> list, IntRef shift, KoddQL instance) {
 		switch(list.get(shift.value).type) {
 
+		case RESULT:
+			return new Node.Lexeme(Lexeme.RESULT);
+		case DELETE:
+			return new Node.Lexeme(Lexeme.DELETE);
+		case USE:
+			return new Node.Lexeme(Lexeme.USE);
+		case CREATE:
+			return new Node.Lexeme(Lexeme.CREATE);
+		
 		case NAME:
 			return new Node.Lexeme(list.get(shift.value));
 		case VARIABLE:
@@ -112,6 +122,125 @@ public class Syntaxer {
 				
 				return node;
 			}
+			
+		case OP_LESS:
+			Node.Column column = new Node.Column();
+			
+			column.name = list.get(++shift.value).toString();
+			
+			if(list.get(++shift.value) != Lexeme.OR) {
+				instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),"|"));
+				return null;
+			}
+			
+			switch(list.get(++shift.value).toString()) {
+			case "BOOLEAN":
+				column.type = DataType.BOOLEAN;
+				column.typeModifier = 0;
+				if(list.get(++shift.value) == Lexeme.ROUND_BR_L) {
+					instance._errors.add(new Notification(Notification.Type.ERROR_UNEXPECTED_SYMBOL,list,list.get(shift.value),list.get(shift.value).toString()));
+					return null;
+				}
+				break;
+			case "BYTE":
+				column.type = DataType.INT;
+				column.typeModifier = 1;
+				if(list.get(++shift.value) == Lexeme.ROUND_BR_L) {
+					instance._errors.add(new Notification(Notification.Type.ERROR_UNEXPECTED_SYMBOL,list,list.get(shift.value),list.get(shift.value).toString()));
+					return null;
+				}
+				break;
+			case "SHORT":
+				column.type = DataType.INT;
+				column.typeModifier = 2;
+				if(list.get(++shift.value) == Lexeme.ROUND_BR_L) {
+					instance._errors.add(new Notification(Notification.Type.ERROR_UNEXPECTED_SYMBOL,list,list.get(shift.value),list.get(shift.value).toString()));
+					return null;
+				}
+				break;
+			case "INTEGER":
+				column.type = DataType.INT;
+				column.typeModifier = 4;
+				if(list.get(++shift.value) == Lexeme.ROUND_BR_L) {
+					instance._errors.add(new Notification(Notification.Type.ERROR_UNEXPECTED_SYMBOL,list,list.get(shift.value),list.get(shift.value).toString()));
+					return null;
+				}
+				break;
+			case "LONG":
+				column.type = DataType.INT;
+				column.typeModifier = 8;
+				if(list.get(++shift.value) == Lexeme.ROUND_BR_L) {
+					instance._errors.add(new Notification(Notification.Type.ERROR_UNEXPECTED_SYMBOL,list,list.get(shift.value),list.get(shift.value).toString()));
+					return null;
+				}
+				break;
+				
+			case "INT":
+				column.type = DataType.INT;
+				column.typeModifier = 4;
+				if(list.get(++shift.value) == Lexeme.ROUND_BR_L) {
+					if(list.get(++shift.value).type == LexemeType.INTEGER) {
+						column.typeModifier = ((Long)((Lexeme.Data)list.get(shift.value)).data).intValue();
+					} else {
+						instance._errors.add(new Notification(Notification.Type.ERROR_UNEXPECTED_SYMBOL,list,list.get(shift.value),list.get(shift.value).toString()));
+						return null;
+					}
+					
+					if(list.get(++shift.value) != Lexeme.ROUND_BR_R) {
+						instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),")"));
+						return null;
+					}
+					++shift.value;
+				}
+				break;
+			}
+			
+			if(list.get(shift.value) == Lexeme.OR)
+				while(list.get(++shift.value) != Lexeme.OP_MORE) {
+					switch(list.get(shift.value).type) {
+					case UNIQUE:
+						column.unique = true; break;
+					case OP_NOT:
+						if(list.get(++shift.value) == Lexeme.NULL)
+							column.notNull = true;
+						else {
+							instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),"NULL"));
+							return null;
+						}
+						break;
+					case PRIMARY:
+						if(list.get(++shift.value) == Lexeme.KEY)
+							column.primaryKey = true;
+						else {
+							instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),"KEY"));
+							return null;
+						}
+						break;
+					case DEFAULT:
+						if(list.get(++shift.value) == Lexeme.ROUND_BR_L)
+							if(list.get(shift.value += 2) == Lexeme.ROUND_BR_R)
+								column.defaultValue = (String)((Lexeme.Data)list.get(shift.value - 1)).toString();
+							else {
+								instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),")"));
+								return null;
+							}
+						else {
+							instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),"("));
+							return null;
+						}
+						break;
+					}
+				}
+			
+			if(list.get(shift.value) != Lexeme.OP_MORE) {
+				instance._errors.add(new Notification(Notification.Type.ERROR_MISSING_SYMBOL,list,list.get(shift.value),">"));
+				return null;
+			}
+			
+			return column;
+			
+		case OP_MORE:
+			return previous;
 			
 		case ROUND_BR_L:
 			++shift.value;
@@ -215,25 +344,40 @@ public class Syntaxer {
 			}
 			
 		case AND:
-			Node.And and = new Node.And();
+			Node.Intersection and = new Node.Intersection();
 			
 			and.left = previous;
 			++shift.value;
 			and.right = syntax(null, list, shift, instance);
 			
 			return and;
-			//previous = and;
-			//++shift;
-			//continue MAIN_LOOP;
 			
 		case OR:
-			Node.Or or = new Node.Or();
+			Node.Union or = new Node.Union();
 			
-			or.left = new Node.Lexeme(list.get(shift.value - 1));
+			or.left = previous;
 			++shift.value;
 			or.right = syntax(null, list, shift, instance);
 			
 			return or;
+			
+		case DIVISION:
+			Node.Minus div = new Node.Minus();
+			
+			div.left = new Node.Lexeme(list.get(shift.value - 1));
+			++shift.value;
+			div.right = syntax(null, list, shift, instance);
+			
+			return div;
+			
+		case XOR:
+			Node.Difference xor = new Node.Difference();
+			
+			xor.left = new Node.Lexeme(list.get(shift.value - 1));
+			++shift.value;
+			xor.right = syntax(null, list, shift, instance);
+			
+			return xor;
 			
 		default:
 			//throw new Exception("Invalid syntax! Started with: " + list.get(shift).type.name());

@@ -112,9 +112,9 @@ public abstract class Node {
 			
 			switch(right.getType()) {
 			case LEXEME:
+				switch((((Lexeme)right).lexeme).type) {
 // SELECT
-				switch((String)((Lexer.Lexeme.Data)((Lexeme)right).lexeme).data) {
-					case "RESULT":
+					case RESULT:
 			
 						switch(left.getType()) {
 						
@@ -208,14 +208,26 @@ public abstract class Node {
 							sb.append(" WHERE ");
 							//((Join)left).selection
 							break;
-// SELECT AND	
+// SELECT UNION	
+						case OR:
+							left.toSQL(sb, dbms);
+							break;
+// SELECT INTERSECT	
 						case AND:
-							left.toSQL(sb, null);
+							left.toSQL(sb, dbms);
+							break;
+// SELECT MINUS	
+						case MINUS:
+							left.toSQL(sb, dbms);
+							break;
+// SELECT DIFFERENCE
+						case DIFFERENCE:
+							left.toSQL(sb, dbms);
 							break;
 						}
 					break;
 // DELETE
-					case "DELETE":
+					case DELETE:
 						switch(left.getType()) {
 // DELETE PROJECTION
 						case PROJECTION:	//TODO: compile-time check if node is lexeme
@@ -284,14 +296,57 @@ public abstract class Node {
 							sb.append(((Lexeme)left).lexeme);
 							break;
 						}
+						break;
+					
+					case NAME:
+						switch(left.getType()) {
+						case COLUMN:
+							sb.append("CREATE TABLE ");
+							sb.append(right.toString());
+							sb.append(" ( ");
+							left.toSQL(sb, dbms);
+							sb.append(')');
+							break;
+						case OR:
+							if(((Union)left).right.getType() == NodeType.LEXEME) {
+								sb.append("ALTER TABLE ");
+								sb.append(right.toString());
+								sb.append(" ( ");
+
+								Union iterator = (Union)left;
+								while(iterator.left.getType() != NodeType.COLUMN) {
+									sb.append(" ADD ");
+									iterator.right.toSQL(sb, dbms);
+									iterator = (Union)iterator.left;
+								}
+								
+								sb.append(')');
+							} else {
+								sb.append("CREATE TABLE ");
+								sb.append(right.toString());
+								sb.append(" ( ");
+								
+								Node iterator = left;
+								while(iterator.getType() != NodeType.COLUMN) {
+									((Union)iterator).right.toSQL(sb, dbms);
+									iterator = ((Union)iterator).left;
+									sb.append(", ");
+								}
+								iterator.toSQL(sb, dbms);
+								
+								sb.append(')');
+							}
+							break;
+						}
+						break;
+					
+					}	
 					break;
+					
+					default:
+						left.toSQL(sb, null);
+						break;
 				}
-				break;
-				
-			default:
-				left.toSQL(sb, null);
-				break;
-			}
 			sb.append(";");
 		}
 		
@@ -306,12 +361,12 @@ public abstract class Node {
 	}
 	
 	// Set operations
-	public static class And extends Node {
+	public static class Union extends Node {
 		public Node left;
 		public Node right;
 		
 		public NodeType getType() {
-			return NodeType.AND;
+			return NodeType.OR;
 		}
 		
 		public void toSQL(StringBuilder sb, DBMS dbms) {
@@ -343,23 +398,52 @@ public abstract class Node {
 		
 		@Override
 		public String toString() {
-			return "And: (" + left.toString() + " & " + right.toString() + ")";
+			return "Union: (" + left.toString() + " | " + right.toString() + ")";
 		}
 	}
 	
-	public static class Or extends Node {
+	public static class Intersection extends Node {
 		public Node left;
 		public Node right;
 		
 		public NodeType getType() {
-			return NodeType.OR;
+			return NodeType.AND;
 		}
 		
 		@Override
 		public String toString() {
-			return "Or: (" + left.toString() + " | " + right.toString() + ")";
+			return "Intersection: (" + left.toString() + " & " + right.toString() + ")";
 		}
 	}
+	
+	public static class Minus extends Node {
+		public Node left;
+		public Node right;
+		
+		public NodeType getType() {
+			return NodeType.MINUS;
+		}
+		
+		@Override
+		public String toString() {
+			return "Minus: (" + left.toString() + " / " + right.toString() + ")";
+		}
+	}
+	
+	public static class Difference extends Node {
+		public Node left;
+		public Node right;
+		
+		public NodeType getType() {
+			return NodeType.DIFFERENCE;
+		}
+		
+		@Override
+		public String toString() {
+			return "Difference: (" + left.toString() + " ^ " + right.toString() + ")";
+		}
+	}
+	
 	
 	// Unary
 	public static class Projection extends Node {
@@ -504,6 +588,179 @@ public abstract class Node {
 	}
 	
 	
+	public static class Column extends Node {
+		public String name;
+		public DataType type;
+		public int typeModifier = 0;
+		public int typeCount = 1;
+		public boolean notNull = false;
+		public boolean unique = false;
+		public boolean primaryKey = false;
+		public String foreignTable = "";
+		public String foreignColumn = "";
+		public String defaultValue = "";
+		
+		@Override
+		public NodeType getType() {
+			return NodeType.COLUMN;
+		}
+
+		@Override
+		public void toSQL(StringBuilder sb, DBMS dbms) {
+			sb.append(name);
+			sb.append(' ');
+			switch(dbms) {
+			case Microsoft_SQL_Server:
+				switch(type) {
+				case BOOLEAN:
+					sb.append("bit ");
+				case INT:
+					switch(typeModifier) {
+					case 1:
+						sb.append("tinyint "); break;
+					case 2:
+						sb.append("smallint "); break;
+					case 4:
+						sb.append("int "); break;
+					case 8:
+						sb.append("bigint "); break;
+					}
+					break;
+				case FLOAT:
+					switch(typeModifier) {
+					case 4:
+						sb.append("real "); break;
+					case 8:
+						sb.append("float "); break;
+					}
+					break;
+				case CHAR:
+					switch(typeModifier) {
+					case 1:
+						sb.append("varchar("); break;
+					case 2:
+						sb.append("nvarchar("); break;
+					}
+					sb.append(typeCount);
+					sb.append(") ");
+					break;
+				}
+				break;
+			case MS_Access:
+				switch(type) {
+				case BOOLEAN:
+					sb.append("Yes/No ");
+				case INT:
+					switch(typeModifier) {
+					case 1:
+						sb.append("Byte "); break;
+					case 2:
+						sb.append("Integer "); break;
+					case 4:
+						sb.append("Long "); break;
+					}
+					break;
+				case FLOAT:
+					switch(typeModifier) {
+					case 4:
+						sb.append("Single "); break;
+					case 8:
+						sb.append("Double "); break;
+					}
+					break;
+				case CHAR:
+					if(typeCount > 255) 
+						sb.append("Text ");
+					else 
+						sb.append("Memo ");
+					break;
+				}
+				break;
+			case MySQL:
+				switch(type) {
+				case BOOLEAN:
+					sb.append("BOOLEAN ");
+				case INT:
+					switch(typeModifier) {
+					case 1:
+						sb.append("Byte "); break;
+					case 2:
+						sb.append("Integer "); break;
+					case 4:
+						sb.append("Long "); break;
+					}
+					break;
+				case FLOAT:
+					switch(typeModifier) {
+					case 4:
+						sb.append("Single "); break;
+					case 8:
+						sb.append("Double "); break;
+					}
+					break;
+				case CHAR:
+					sb.append("VARCHAR(");
+					sb.append(typeCount);
+					sb.append(") ");
+					break;
+				}
+				break;
+			}
+			
+			if(notNull)
+				sb.append(" NOT NULL ");
+			if(unique)
+				sb.append(" UNIQUE ");
+			if(primaryKey)
+				sb.append(" PRIMARY KEY ");
+			if(!defaultValue.isEmpty()) {
+				sb.append(" DEFAULT(");
+				sb.append(defaultValue);
+				sb.append(") ");
+			}
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Column: (");
+			sb.append(name);
+			sb.append(" | ");
+			sb.append(type.name());
+			sb.append('(');
+			sb.append(typeModifier);
+			sb.append(')');
+			if(typeCount != 1) {
+				sb.append('[');
+				sb.append(typeCount);
+				sb.append(']');
+			}
+			sb.append(' ');
+			
+			if(notNull)
+				sb.append("NOT NULL, ");
+			if(unique)
+				sb.append("UNIQUE, ");
+			if(primaryKey)
+				sb.append("PRIMARY KEY, ");
+			if(!foreignTable.isEmpty()) {
+				sb.append("FOREIGN KEY(");
+				sb.append(foreignTable);
+				sb.append('[');
+				sb.append(foreignColumn);
+				sb.append("]), ");
+			}
+			if(!defaultValue.isEmpty())
+				sb.append("DEFAULT(" + defaultValue + "), ");
+			
+			//sb.deleteCharAt(sb.length()-1);
+			sb.append(')');
+			
+			return sb.toString(); 
+		}
+		
+	}
+	
 	public static class Group extends Node {
 
 		ArrayList<Node> nodes = new ArrayList<Node>();
@@ -602,6 +859,10 @@ public abstract class Node {
 	}
 	
 	public enum NodeType {
-		LEXEME, GROUP, NAMES, TUPLE, TUPLE_NAMED, ASSIGN, AND, OR, PROJECTION, SELECTION, EQUIJOIN, JOIN
+		LEXEME, GROUP, COLUMN, NAMES, TUPLE, TUPLE_NAMED, ASSIGN, AND, OR, MINUS, DIFFERENCE, PROJECTION, SELECTION, EQUIJOIN, JOIN
+	}
+	
+	public enum DataType {
+		NOT_SET, BOOLEAN, INT, FLOAT, CHAR, DYNAMIC
 	}
 }
