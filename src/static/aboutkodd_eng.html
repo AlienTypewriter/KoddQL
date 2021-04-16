@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uk">
+ <head>
+  <meta charset="utf-8">
+  <title>About KoddQL</title>
+  <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous"/>
+ </head>
+ <body style="background-image: url(images/bg.png); background-repeat: no-repeat; background-size: cover; background-attachment: fixed">
+  <header>
+   <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #191970 !important">
+     <a class="navbar-brand" href="index_eng.html" style="font-size: 140%">KoddQL to SQL</a>
+     <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav mr-auto">
+       <li class="nav-item">
+         <a class="nav-link" href="about_eng.html">About us</a>
+       </li>
+       <li class="nav-item active">
+         <a class="nav-link" href="aboutkodd_eng.html">About KoddQL</a>
+          <span class="sr-only">(current)</span>
+       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="index_eng.html">KoddQl to SQL
+        </a>
+       </li>
+      </ul>
+     </div>
+     <div class="collapse navbar-collapse" id="navbarColor01" style="flex-direction: row-reverse ">
+      <ul class="navbar-nav">
+		 <li class="nav-item">
+			<a class ="nav-link", href="aboutkodd.html">UKR</a>
+        </li>
+       <li class="nav-item active">
+			<a class ="nav-link", href="aboutkodd_eng.html">ENG
+            <span class="sr-only">(current)</span></a>
+       </li>
+      </ul>
+     </div>
+   </nav>
+  </header>
+  <div class="jumbotron" style="width: 75%; margin-left: auto; margin-right: auto; margin-top: 20px; opacity: 0.85; filter: alpha(Opacity=85);">
+   <h3>Про KoddQL в SQL!</h3>
+   <br>
+   <p>Codd's theorem states that relational algebra and the domain-independent relational calculus queries, two well-known foundational query languages for the relational model, are precisely equivalent in expressive power. That is, a database query can be formulated in one language if and only if it can be expressed in the other.</p>
+   <p>The theorem is named after Edgar F. Codd, the father of the relational model for database management.</p>
+   <p>The domain independent relational calculus queries are precisely those relational calculus queries that are invariant under choosing domains of values beyond those appearing in the database itself. That is, queries that may return different results for different domains are excluded. An example of such a forbidden query is the query "select all tuples other than those occurring in relation R", where R is a relation in the database. Assuming different domains, i.e., sets of atomic data items from which tuples can be constructed, this query returns different results and thus is clearly not domain independent.</p>
+   <p>Codd's Theorem is notable since it establishes the equivalence of two syntactically quite dissimilar languages: relational algebra is a variable-free language, while relational calculus is a logical language with variables and quantification.</p>
+   <p>Relational calculus is essentially equivalent to first-order logic, and indeed, Codd's Theorem had been known to logicians since the late 1940s.</p>
+   <p>Query languages that are equivalent in expressive power to relational algebra were called relationally complete by Codd. By Codd's Theorem, this includes relational calculus. Relational completeness clearly does not imply that any interesting database query can be expressed in relationally complete languages. Well-known examples of inexpressible queries include simple aggregations (counting tuples, or summing up values occurring in tuples, which are operations expressible in SQL but not in relational algebra) and computing the transitive closure of a graph given by its binary edge relation (see also expressive power). Codd's theorem also doesn't consider SQL nulls and the three-valued logic they entail; the logical treatment of nulls remains mired in controversy.[4] Additionally, SQL has multiset semantics and allows duplicate rows. Nevertheless, relational completeness constitutes an important yardstick by which the expressive power of query languages can be compared.</p>
+   <p>KoddQL is a dialect of the language of relational algebra. With KoddQL you can express all queries from relational algebra and with our site you can actually translate a query from relational algebra to SQL.</p>
+   <p>Due to the fact that SQL has more features compared to relational algebra, it is planned to expand KoddQL in the future. </p>
+   </br>
+   <p>A detailed tutorial on KoddQL can be found <a href="https://github.com/AlienTypewriter/KoddQL/wiki/KoddQL-Tutorial">here</a>.</p>
+  </div>
+ </body>
+</html>

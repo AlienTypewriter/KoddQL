@@ -2,23 +2,23 @@
 <html lang="uk">
  <head>
   <meta charset="utf-8">
-  <title>Алгебра Кодда в SQL</title>
+  <title>KoddQL to SQL</title>
   <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous"/>
  </head>
  <body style="background-image: url(images/bg.png); background-repeat: no-repeat; background-size: cover; background-attachment: fixed">
   <header>
    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #191970 !important">
-     <a class="navbar-brand" href="index.html" style="font-size: 140%">KoddQL в SQL</a>
+     <a class="navbar-brand" href="index_eng.html" style="font-size: 140%">KoddQL to SQL</a>
      <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav mr-auto">
        <li class="nav-item">
-         <a class="nav-link" href="/about.html">Про нас</a>
+         <a class="nav-link" href="about_eng.html">About us</a>
        </li>
        <li class="nav-item">
-         <a class="nav-link" href="/aboutkodd.html">Про KoddQL</a>
+         <a class="nav-link" href="aboutkodd_eng.html">About KoddQL</a>
        </li>
       <li class="nav-item active">
-        <a class="nav-link" href="/index.html">KoddQl в SQL
+        <a class="nav-link" href="index_eng.html">KoddQl to SQL
           <span class="sr-only">(current)</span>
         </a>
        </li>
@@ -26,12 +26,12 @@
      </div>
      <div class="collapse navbar-collapse" id="navbarColor01" style="flex-direction: row-reverse ">
       <ul class="navbar-nav">
-		 <li class="nav-item active">
-			<a class ="nav-link", href="/index.html">UKR
-            <span class="sr-only">(current)</span></a>
+		 <li class="nav-item">
+			<a class ="nav-link", href="index.html">UKR</a>
         </li>
-       <li class="nav-item">
-			<a class ="nav-link", href="/index_eng.html">ENG</a>
+       <li class="nav-item active">
+			<a class ="nav-link", href="index_eng.html">ENG
+            <span class="sr-only">(current)</span></a>
        </li>
       </ul>
      </div>
@@ -40,7 +40,7 @@
   <div class="jumbotron" style="width: 75%; margin-left: auto; margin-right: auto; margin-top: 20px; opacity: 0.85; filter: alpha(Opacity=85);">
   
    <form id="formElem">
-     <p><b>Введіть запит на алгебрі Кодда:</b></p>
+     <p><b>Enter the query in KoddQL :</b></p>
      <p><textarea required class="form-control" id="querytext" rows="10" name="inputText"></textarea></p>
      <p>
       <select required class="form-control" id="dbtype">
@@ -51,14 +51,14 @@
        <option value="oracle">oracle</option>
       </select>
      </p>
-     <button type="submit" class="btn btn-primary">Надіслати</button>
+     <button type="submit" class="btn btn-primary">Send</button>
     <p></p>
   </form>
-  <p class="text-success"><label>Результат:</label></p>
+  <p class="text-success"><label>Result:</label></p>
      <p><textarea class="form-control" id="result" rows="10" name="outputTest" readonly></textarea></p>
-     <p class="text-danger"><label>Помилки:</label></p>
+     <p class="text-danger"><label>Errors:</label></p>
      <p class="text-danger" id="error"></p>
-     <p class="text-warning"><label>Попередення:</label></p>
+     <p class="text-warning"><label>Warnings:</label></p>
      <p class="text-warning" id="warning"></p>
   </div>
   <script>
